@@ -7,6 +7,7 @@ import warnings
 from obspy.signal.cross_correlation import xcorr_pick_correction
 from scipy.integrate import simps
 from pyadjoint import logger
+import scipy
 
 
 def calculate_cc_shift(d, s, dt, use_cc_error=True, dt_sigma_min=1.0,
@@ -339,7 +340,7 @@ def xcorr_shift(d, s):
     :type s:  np.array
     :param s: synthetic time series array
     """
-    cc = np.correlate(d, s, mode="full")
+    cc = scipy.signal.correlate(d, s, mode="full") # In case there is a long window, use scipy for cross correlation. It determines if it should use fft, and avoid extremely long cross-correlation of long waveforms. cc = np.correlate(d, s, mode="full")
     time_shift = cc.argmax() - len(d) + 1
     return time_shift
 
